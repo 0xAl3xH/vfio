@@ -1,13 +1,27 @@
-<domain type='kvm'>
-  <name>windows10vm-baseline</name>
-  <uuid>3e0ba1dc-d6da-49b0-af8d-b7b70b3e080e</uuid>
-  <memory unit='KiB'>33554432</memory>
-  <currentMemory unit='KiB'>33554432</currentMemory>
-  <vcpu placement='static' current='1'>8</vcpu>
+<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name>windows10vm</name>
+  <uuid>3d368e1c-c9ec-4b2b-bac5-7fb747612e89</uuid>
+  <memory unit='KiB'>16777216</memory>
+  <currentMemory unit='KiB'>16777216</currentMemory>
+  <vcpu placement='static'>8</vcpu>
+  <iothreads>2</iothreads>
+  <cputune>
+    <vcpupin vcpu='0' cpuset='4'/>
+    <vcpupin vcpu='1' cpuset='12'/>
+    <vcpupin vcpu='2' cpuset='5'/>
+    <vcpupin vcpu='3' cpuset='13'/>
+    <vcpupin vcpu='4' cpuset='6'/>
+    <vcpupin vcpu='5' cpuset='14'/>
+    <vcpupin vcpu='6' cpuset='7'/>
+    <vcpupin vcpu='7' cpuset='15'/>
+    <emulatorpin cpuset='0,8'/>
+    <iothreadpin iothread='1' cpuset='0,8'/>
+    <iothreadpin iothread='2' cpuset='1,9'/>
+  </cputune>
   <os>
     <type arch='x86_64' machine='pc-q35-4.2'>hvm</type>
     <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
-    <nvram>/var/lib/libvirt/qemu/nvram/windows10vm-baseline_VARS.fd</nvram>
+    <nvram>/var/lib/libvirt/qemu/nvram/vm1_VARS.fd</nvram>
     <boot dev='hd'/>
   </os>
   <features>
@@ -41,7 +55,7 @@
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='/var/lib/libvirt/images/vm1-clone.qcow2'/>
+      <source file='/var/lib/libvirt/images/vm1.qcow2'/>
       <target dev='vda' bus='virtio'/>
       <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
     </disk>
@@ -125,7 +139,7 @@
       <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
     </controller>
     <interface type='network'>
-      <mac address='52:54:00:cd:2f:e1'/>
+      <mac address='52:54:00:93:a2:f0'/>
       <source network='default'/>
       <model type='e1000'/>
       <address type='pci' domain='0x0000' bus='0x02' slot='0x01' function='0x0'/>
@@ -183,9 +197,15 @@
     <redirdev bus='usb' type='spicevmc'>
       <address type='usb' bus='0' port='3'/>
     </redirdev>
-    <memballoon model='virtio'>
-      <address type='pci' domain='0x0000' bus='0x09' slot='0x00' function='0x0'/>
-    </memballoon>
+    <memballoon model='none'/>
   </devices>
+  <qemu:commandline>
+    <qemu:arg value='-device'/>
+    <qemu:arg value='ich9-intel-hda,bus=pcie.0,addr=0x1b'/>
+    <qemu:arg value='-device'/>
+    <qemu:arg value='hda-micro,audiodev=hda'/>
+    <qemu:arg value='-audiodev'/>
+    <qemu:arg value='pa,id=hda,server=unix:/run/user/1000/pulse/native'/>
+  </qemu:commandline>
 </domain>
 
